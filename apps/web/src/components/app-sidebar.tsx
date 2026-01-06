@@ -107,11 +107,10 @@ export default function AppSidebar(
   const sessions: Session[] = sessionsData ?? [];
 
   // Filter sessions based on user preference
-  // Note: Currently no subagent identification exists in the SDK
-  // This will show all sessions until SDK adds isSubagent field
+  // Sessions with parentID are subagent sessions
   const filteredSessions = showSubagentSessions
     ? sessions
-    : sessions.filter((session) => !session.isSubagent);
+    : sessions.filter((session) => !session.parentID);
 
   const { data: diffData } = useGitDiff();
   const diffFileCount = useMemo(() => {
