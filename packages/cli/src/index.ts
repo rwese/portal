@@ -14,7 +14,20 @@ const DEFAULT_HOSTNAME = "0.0.0.0";
 const DEFAULT_PORT = 3000;
 const DEFAULT_OPENCODE_PORT = 4000;
 
-const WEB_SERVER_PATH = join(__dirname, "..", "web", "server", "index.mjs");
+// Try multiple locations for the web server
+const WEB_SERVER_PATHS = [
+  join(__dirname, "..", "web", "server", "index.mjs"),
+  join(__dirname, "..", "..", "..", "apps", "web", "dist", "server", "index.mjs"),
+];
+
+function findWebServerPath(): string | null {
+  for (const path of WEB_SERVER_PATHS) {
+    if (existsSync(path)) {
+      return path;
+    }
+  }
+  return null;
+}
 
 interface PortalInstance {
   id: string;
@@ -156,18 +169,36 @@ async function startOpenCodeServer(
 
 async function startWebServer(port: number, hostname: string): Promise<number> {
   console.log(`Starting Web UI server...`);
-  const proc = Bun.spawn(["bun", "run", WEB_SERVER_PATH], {
-    cwd: dirname(WEB_SERVER_PATH),
-    stdio: ["ignore", "pipe", "pipe"],
-    env: {
-      ...process.env,
-      PORT: String(port),
-      HOST: hostname,
-      NITRO_PORT: String(port),
-      NITRO_HOST: hostname,
-    },
-  });
-  return proc.pid;
+  
+  // Try to find the web server
+  const webServerPath = findWebServerPath();
+  
+  if (webServerPath) {
+    // Use pre-built server if available
+    const proc = Bun.spawn(["bun", "run", webServerPath], {
+      cwd: dirname(webServerPath),
+      stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        PORT: String(port),
+        HOST: hostname,
+        NITRO_PORT: String(port),
+        NITRO_HOST: hostname,
+      },
+    });
+    return proc.pid;
+  } else {
+    // Fall back to running Vite dev server from apps/web
+    const appsWebPath = join(__dirname, "..", "..", "..", "apps", "web");
+    const proc = Bun.spawn(["bun", "run", "dev", "--port", String(port), "--host", hostname], {
+      cwd: appsWebPath,
+      stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        ...process.env,
+      },
+    });
+    return proc.pid;
+  }
 }
 
 async function cmdDefault(
@@ -215,10 +246,15 @@ async function cmdDefault(
     config.instances.splice(existingIndex, 1);
   }
 
-  if (!existsSync(WEB_SERVER_PATH)) {
-    console.error(`❌ Web server not found at ${WEB_SERVER_PATH}`);
-    console.error(`   The web app may not be bundled correctly.`);
-    process.exit(1);
+  if (!findWebServerPath()) {
+    // Only error if we can't find a pre-built server and apps/web doesn't exist
+    const appsWebPath = join(__dirname, "..", "..", "..", "apps", "web");
+    if (!existsSync(appsWebPath)) {
+      console.error(`❌ Web server not found at ${WEB_SERVER_PATHS.join(" or ")}`);
+      console.error(`   The web app may not be bundled correctly.`);
+      process.exit(1);
+    }
+    // If apps/web exists, we'll use Vite dev server instead
   }
 
   console.log(`Starting OpenPortal...`);
