@@ -9,12 +9,13 @@ export function SessionFilter({ className }: SessionFilterProps) {
   const { showSubagentSessions, setShowSubagentSessions } = useSessionPreferencesStore();
 
   return (
-    <Checkbox
-      className={className}
-      isSelected={showSubagentSessions}
-      onChange={(e) => setShowSubagentSessions(e.target.checked)}
-    >
-      Show subagent sessions
-    </Checkbox>
+    <div className={className}>
+      <Checkbox
+        isSelected={showSubagentSessions}
+        onChange={(isSelected) => setShowSubagentSessions(isSelected)}
+      >
+        Show subagent sessions
+      </Checkbox>
+    </div>
   );
 }

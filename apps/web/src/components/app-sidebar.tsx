@@ -201,7 +201,9 @@ export default function AppSidebar(
           </SidebarSection>
 
           <SidebarSection label="Sessions">
-            <SessionFilter className="mb-2" />
+            <div className="px-2 mb-2">
+              <SessionFilter />
+            </div>
             {filteredSessions.map((session) => (
               <SidebarItem key={session.id} tooltip={session.title}>
                 {({ isCollapsed, isFocused }) => (
