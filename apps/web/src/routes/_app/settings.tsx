@@ -12,7 +12,9 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { Tabs, TabList, Tab, TabPanel } from "@/components/ui/tabs";
-import { SessionFilter } from "@/components/session-filter";
+import { SessionFilterDropdown } from "@/components/session-filter-dropdown";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useSessionPreferencesStore } from "@/stores/session-preferences-store";
 
 const themes = [
   { id: "light", title: "Light" },
@@ -159,7 +161,7 @@ function SettingsPage() {
                 <p className="text-xs text-muted-fg">
                   Manage session visibility and filtering options.
                 </p>
-                <SessionFilter />
+                <SessionSettings />
               </div>
             </div>
           </div>

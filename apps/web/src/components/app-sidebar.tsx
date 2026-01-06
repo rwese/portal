@@ -1,5 +1,5 @@
-import { EllipsisHorizontalIcon } from "@heroicons/react/16/solid";
-import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, FunnelIcon } from "@heroicons/react/16/solid";
+import { ChevronUpDownIcon, FunnelIcon as FunnelIconOutline } from "@heroicons/react/24/outline";
 import {
   ArrowRightStartOnRectangleIcon,
   Cog6ToothIcon,
@@ -49,7 +49,7 @@ import {
 } from "@/hooks/use-opencode";
 import { useInstanceStore } from "@/stores/instance-store";
 import { useSessionPreferencesStore } from "@/stores/session-preferences-store";
-import { SessionFilter } from "@/components/session-filter";
+import { SessionFilterDropdown } from "@/components/session-filter-dropdown";
 import { useNavigate, useMatch } from "@tanstack/react-router";
 import type { Session } from "@opencode-ai/sdk";
 
@@ -200,8 +200,8 @@ export default function AppSidebar(
           </SidebarSection>
 
           <SidebarSection label="Sessions">
-            <div className="px-2 mb-2">
-              <SessionFilter />
+            <div className="px-1 mb-1">
+              <SessionFilterDropdown />
             </div>
             {filteredSessions.map((session) => (
               <SidebarItem key={session.id} tooltip={session.title}>
