@@ -48,6 +48,8 @@ import {
   useGitDiff,
 } from "@/hooks/use-opencode";
 import { useInstanceStore } from "@/stores/instance-store";
+import { useSessionPreferencesStore } from "@/stores/session-preferences-store";
+import { SessionFilter } from "@/components/session-filter";
 import { useNavigate, useMatch } from "@tanstack/react-router";
 import type { Session } from "@opencode-ai/sdk";
 
@@ -101,7 +103,15 @@ export default function AppSidebar(
   const { data: sessionsData, mutate: mutateSessions } = useSessions();
   const createSession = useCreateSession();
   const deleteSession = useDeleteSession();
+  const { showSubagentSessions } = useSessionPreferencesStore();
   const sessions: Session[] = sessionsData ?? [];
+
+  // Filter sessions based on user preference
+  // Note: Currently no subagent identification exists in the SDK
+  // This will show all sessions until SDK adds isSubagent field
+  const filteredSessions = showSubagentSessions
+    ? sessions
+    : sessions.filter((session) => !session.isSubagent);
 
   const { data: diffData } = useGitDiff();
   const diffFileCount = useMemo(() => {
@@ -191,7 +201,8 @@ export default function AppSidebar(
           </SidebarSection>
 
           <SidebarSection label="Sessions">
-            {sessions.map((session) => (
+            <SessionFilter className="mb-2" />
+            {filteredSessions.map((session) => (
               <SidebarItem key={session.id} tooltip={session.title}>
                 {({ isCollapsed, isFocused }) => (
                   <>

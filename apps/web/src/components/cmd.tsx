@@ -15,6 +15,7 @@ import {
   useInstances,
 } from "@/hooks/use-opencode";
 import { useInstanceStore, type Instance } from "@/stores/instance-store";
+import { useSessionPreferencesStore } from "@/stores/session-preferences-store";
 import { IconGridPlus } from "@/components/icons/grid-plus-icon";
 import IconBox from "@/components/icons/box-icon";
 import { IconThemeDark } from "@/components/icons/theme-dark-icon";
@@ -61,6 +62,7 @@ export default function Cmd() {
   const { setTheme } = useTheme();
   const currentInstance = useInstanceStore((s) => s.instance);
   const setInstance = useInstanceStore((s) => s.setInstance);
+  const { showSubagentSessions } = useSessionPreferencesStore();
 
   const sessions: Session[] = sessionsData ?? [];
   const instances: InstanceData[] = instancesData?.instances ?? [];
@@ -68,7 +70,14 @@ export default function Cmd() {
   const isOnSessionPage =
     location.pathname.startsWith("/session/") && currentSessionId;
 
-  const recentSessions = sessions.slice(0, 5);
+  // Filter sessions based on user preference
+  // Note: Currently no subagent identification exists in the SDK
+  // This will show all sessions until SDK adds isSubagent field
+  const filteredSessions = showSubagentSessions
+    ? sessions
+    : sessions.filter((session) => !session.isSubagent);
+
+  const recentSessions = filteredSessions.slice(0, 5);
 
   useEffect(() => {
     setIsOpen(false);
