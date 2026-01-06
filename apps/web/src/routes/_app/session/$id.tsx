@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader } from "@/components/ui/loader";
 import { getAgentColor } from "@/lib/agent-colors";
 import { ModelSelect } from "@/components/model-select";
+import { AgentSelect } from "@/components/agent-select";
+import { useAgentStore } from "@/stores/agent-store";
 import {
   FileMentionPopover,
   useFileMention,
@@ -328,13 +330,19 @@ function SessionPage() {
     async (messageText: string, messageId: string) => {
       if (!sessionId || !port) return;
 
+      const selectedAgent = useAgentStore.getState().selectedAgent;
+
       try {
         const response = await fetch(
           `/api/opencode/${port}/session/${sessionId}/prompt`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: messageText, model: selectedModel }),
+            body: JSON.stringify({ 
+              text: messageText, 
+              model: selectedModel,
+              agent: selectedAgent 
+            }),
           },
         );
 
@@ -546,6 +554,7 @@ function SessionPage() {
             rows={5}
           />
           <div className="mt-3 flex items-center justify-end gap-2">
+            <AgentSelect />
             <ModelSelect />
             <Button
               type="submit"
