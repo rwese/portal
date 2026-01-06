@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader } from "@/components/ui/loader";
+import { getAgentColor } from "@/lib/agent-colors";
 import { ModelSelect } from "@/components/model-select";
 import {
   FileMentionPopover,
@@ -172,13 +173,24 @@ const MessageItem = memo(function MessageItem({
   const textContent = getMessageContent(message.parts);
   const isAssistant = message.info.role === "assistant";
   const toolCalls = message.parts.filter(isToolPart);
+  
+  // Get agent name from message - use 'agent' for user messages, 'mode' for assistant messages
+  const agentName = isAssistant 
+    ? (message.info as any).mode || undefined 
+    : (message.info as any).agent || undefined;
+  
+  const agentColor = getAgentColor(agentName);
 
   return (
     <div className="py-3 px-6">
       {textContent && (
         <div className="flex gap-2">
           {isAssistant ? (
-            <IconBadgeSparkle size="16px" className="shrink-0 mt-1" />
+            <IconBadgeSparkle 
+              size="16px" 
+              className="shrink-0 mt-1"
+              style={agentName ? { color: `var(${agentColor.var})` } : undefined}
+            />
           ) : (
             <IconUser size="16px" className="shrink-0 mt-1" />
           )}
@@ -186,6 +198,11 @@ const MessageItem = memo(function MessageItem({
             {!isAssistant && message.isQueued && (
               <Badge intent="warning" className="mb-1">
                 Queued
+              </Badge>
+            )}
+            {isAssistant && agentName && (
+              <Badge intent="outline" className={`mb-1 agent-badge ${agentColor.class}`}>
+                {agentName}
               </Badge>
             )}
             <div

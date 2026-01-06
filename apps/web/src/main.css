@@ -1505,3 +1505,35 @@ body {
 .dark .diff-code-delete {
   background-color: oklch(0.577 0.245 27.325 / 0.1);
 }
+
+/* Agent color classes - deterministic colors for agent badges */
+.agent-success { --agent-color: var(--color-success); }
+.agent-primary { --agent-color: var(--color-primary); }
+.agent-info { --agent-color: var(--color-info); }
+.agent-warning { --agent-color: var(--color-warning); }
+.agent-secondary { --agent-color: var(--color-secondary); }
+.agent-muted { --agent-color: var(--color-muted); }
+.agent-border { --agent-color: var(--color-border); }
+.agent-danger { --agent-color: var(--color-danger); }
+
+/* Agent badge styling - uses agent color with transparency */
+.agent-badge {
+  background: rgb(from var(--agent-color) r g b / 0.1);
+  border: 1px solid rgb(from var(--agent-color) r g b / 0.2);
+  color: var(--agent-color);
+}
+
+/* Agent badge hover state */
+.agent-badge:hover {
+  background: rgb(from var(--agent-color) r g b / 0.15);
+  border-color: rgb(from var(--agent-color) r g b / 0.3);
+}
+
+/* Agent dot indicator - for status indicators */
+.agent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--agent-color);
+  box-shadow: 0 0 8px var(--agent-color);
+}
