@@ -4,7 +4,10 @@
   "scripts": {
     "build": "vite build",
     "dev": "bunx --bun vite",
-    "preview": "bun ./.output/server/index.mjs"
+    "preview": "bun ./.output/server/index.mjs",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@fontsource-variable/geist-mono": "^5.2.7",
@@ -39,8 +42,12 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
+    "happy-dom": "^20.0.11",
     "nitro": "latest",
     "tailwindcss": "^4.1.18",
-    "vite": "npm:rolldown-vite"
+    "vite": "npm:rolldown-vite",
+    "vitest": "^4.0.16"
   }
 }
