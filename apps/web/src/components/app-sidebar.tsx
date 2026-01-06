@@ -200,9 +200,7 @@ export default function AppSidebar(
           </SidebarSection>
 
           <SidebarSection label="Sessions">
-            <div className="px-1 mb-1">
-              <SessionFilterDropdown />
-            </div>
+            <SessionFilterDropdown />
             {filteredSessions.map((session) => (
               <SidebarItem key={session.id} tooltip={session.title}>
                 {({ isCollapsed, isFocused }) => (
